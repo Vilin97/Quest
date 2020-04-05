@@ -22,6 +22,15 @@ public abstract class Unit {
         this.currentHP = HPLevelMultiplier*level;
     }
 
+    public boolean equals(Object o){
+        if (o instanceof Unit) {
+            Unit creature = (Unit) o;
+            return creature.getName().equals(getName())
+                    && creature.getCurrentHP() == getCurrentHP()
+                    && creature.getLevel() == getLevel();
+        } else return false;
+    }
+
     public abstract String toString();
 
     public void levelUp() {
@@ -79,7 +88,9 @@ public abstract class Unit {
     }
 
     public void setCurrentHP(int currentHP) {
-        this.currentHP = currentHP;
+        if (currentHP > getHP()) this.currentHP = getHP();
+        else if (currentHP < 0) this.currentHP = 0;
+        else this.currentHP = currentHP;
     }
 
     public String getName() {

@@ -38,7 +38,7 @@ public abstract class Cell {
         }
         return s;
     }
-    public abstract boolean isEmpty();
-    public abstract boolean isMarket();
-    public abstract boolean isInaccessible();
+    public abstract boolean isMarketCell();
+    public abstract boolean isInaccessibleCell();
+    public abstract boolean isEmptyCell();
 }

@@ -5,11 +5,19 @@ public class TeamHeroes extends Team {
     public TeamHeroes() {
     }
 
-    public TeamHeroes(Unit[] units) {
-        super(units);
+    public TeamHeroes(Hero[] heroes) {
+        super(heroes);
     }
 
     public String toString()  {
         return "Team:\n" + legend +"\n"+ General.myArrayToString(getUnits());
     }
+
+    /*public void changeTeamMP(int amount){
+        for (Unit h : this ) {
+            Hero hero = (Hero) h;
+            hero.setCurrentMP();
+        }
+    }
+    */
 }

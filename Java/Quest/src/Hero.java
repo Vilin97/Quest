@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public abstract class Hero extends  Unit {
     private int mp;
     private int currentMP;
@@ -53,6 +55,60 @@ public abstract class Hero extends  Unit {
         s += "Skills: \n"+skillsToString();
         s+= "\n~~~~~~";
         return s;
+    }
+
+    public void tradeWithMarket(Market market) {
+        System.out.println(getName()+" is trading with the market.");
+        System.out.println(detailedToString());
+        System.out.println("Are you buying an item (b,i), a spell (b,s) or selling (s)?");
+        String ans = IOTools.getValidatedInput("b,i b,s s".split(" "));
+        if (ans.equals("s")) {
+            System.out.println("Enter the ID of the item you are selling.");
+            int id = IOTools.getIntInput(1, getBackpack().getItems().length+1) - 1;
+            sell(id, market);
+        } else if (ans.equals("b,i")) {
+            System.out.println("Enter the ID of the item you are buying.");
+            int id = IOTools.getIntInput(1, market.getItems().length+1) - 1;
+            buyItem(id, market);
+        } else if (ans.equals("b,s")) {
+            System.out.println("Enter the ID of the spell you are buying.");
+            int id = IOTools.getIntInput(1, market.getSkills().length+1) - 1;
+            buySpell(id, market);
+        }
+        System.out.println("Have a look at the hero after the trade.\n"+detailedToString());
+    }
+
+    public void buyItem(int itemID, Market market) {
+        // hero buys item under ID itemID
+        Item[] items = market.getItems();
+        Item item = items[itemID];
+        if (item.getCost() > getBackpack().getMoney()) { System.out.println("Not enough money"); }
+        else if (item.getLevel() > getLevel()) { System.out.println("Level not high enough"); }
+        else {
+            getBackpack().addItem(items[itemID]);
+            getBackpack().changeMoneyBy(-item.getCost());
+        }
+    }
+
+    public void buySpell(int id, Market market) {
+        // hero buys spell under ID itemID
+        Skill[] skills = market.getSkills();
+        Skill skill = skills[id];
+        if (skill.getCost() > getBackpack().getMoney()) { System.out.println("Not enough money"); }
+        else if (skill.getLevel() > getLevel()) { System.out.println("Level not high enough"); }
+        else {
+            getSkillSet().add(skill);
+            getBackpack().changeMoneyBy(-skill.getCost());
+        }
+    }
+
+    public void sell(int itemID, Market market) {
+        // hero sells item under ID itemID (in hero's backpack) for twice less than the cost
+        if (itemID >= 0 && itemID < getBackpack().getItems().length){
+            Backpack backpack = getBackpack();
+            backpack.changeMoneyBy(backpack.getItems()[itemID].getCost()/2);
+            backpack.removeItem(itemID);
+        }
     }
 
     public void drinkPotion(int itemID) {

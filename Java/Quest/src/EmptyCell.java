@@ -4,7 +4,7 @@ public class EmptyCell extends Cell {
         super(emptySymbol);
     }
 
-    public boolean isMarket() { return false; }
-    public boolean isEmpty() { return true; }
-    public boolean isInaccessible() { return false; }
+    public boolean isMarketCell() { return false; }
+    public boolean isEmptyCell() { return true; }
+    public boolean isInaccessibleCell() { return false; }
 }

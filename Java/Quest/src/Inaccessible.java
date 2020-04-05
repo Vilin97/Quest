@@ -4,7 +4,7 @@ public class Inaccessible extends Cell {
         super(inaccessibleSymbol);
     }
 
-    public boolean isMarket() { return false; }
-    public boolean isEmpty() { return false; }
-    public boolean isInaccessible() { return true; }
+    public boolean isMarketCell() { return false; }
+    public boolean isEmptyCell() { return false; }
+    public boolean isInaccessibleCell() { return true; }
 }

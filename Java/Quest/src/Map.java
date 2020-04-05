@@ -121,7 +121,7 @@ public class Map {
             int r = heroLocation[0];
             int c = heroLocation[1];
             if (r < 0 || r >= height || c < 0 || c >= width) { throw new IllegalArgumentException("Location is out of bounds."); }
-            else if (position[r][c].isInaccessible()) { throw new IllegalArgumentException("This location is inaccessible."); }
+            else if (position[r][c].isInaccessibleCell()) { throw new IllegalArgumentException("This location is inaccessible."); }
             else {
                 position[this.heroLocation[0]][this.heroLocation[1]].setHeroesHere(false);
                 this.heroLocation = heroLocation;

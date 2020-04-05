@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public abstract class Skill {
     // class for a skill
     // Name/cost/required level/damage/mana cost
@@ -20,6 +22,19 @@ public abstract class Skill {
     @Override
     public String toString() {
         return String.format("%s | %s | %d | %d | %d | %d", className, name, cost, manaCost, damage, level);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Skill skill = (Skill) o;
+        return cost == skill.cost &&
+                level == skill.level &&
+                damage == skill.damage &&
+                manaCost == skill.manaCost &&
+                name.equals(skill.name) &&
+                className.equals(skill.className);
     }
 
     public abstract void doSideEffect(Monster monster);

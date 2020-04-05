@@ -7,16 +7,16 @@ public class Quest {
     // the class for the Quest game
     private Map map;
     private TeamHeroes heroes;
-    private static String path = "C:/Users/Vasily/GitHub/Java/Quest/data/";
-    private static double marketProb = 0.3;
-    private static double emptyProb = 0.5;
-    private static double encounterProb = 0.7;
-    private static String[] actionKeys = {"w","a","s","d","q","i"};
-    private static String actionLegend = String.format(
+    private static final String path = "C:/Users/Vasily/GitHub/Java/Quest/data/";
+    private static final double marketProb = 0.3;
+    private static final double emptyProb = 0.5;
+    private static final double encounterProb = 0.7;
+    private static final String[] actionKeys = {"w","a","s","d","q","i"};
+    private static final String actionLegend = String.format(
             "%s = up, %s = left, %s = down, %s = right, %s = quit game, %s = display information",
             actionKeys[0],actionKeys[1],actionKeys[2],actionKeys[3],actionKeys[4],actionKeys[5]);
     private boolean gameEnded;
-    private static int maxTeamSize = 3;
+    private static final int maxTeamSize = 3;
 
     public Quest(Map map, TeamHeroes heroes) {
         this.map = map;
@@ -77,11 +77,11 @@ public class Quest {
 
         if (moved) {
             Cell cell = map.getPosition()[location[0]][location[1]];
-            if (cell.isEmpty() ) {
+            if (cell.isEmptyCell() ) {
                 processEmpty();
 
             }
-            else if (cell.isMarket()) {
+            else if (cell.isMarketCell()) {
                 processMarket(cell);
             }
         }
@@ -96,12 +96,14 @@ public class Quest {
         }
     }
 
-    public void fight() {
+    private void fight() {
         // spawn monsters and fight them
         TeamMonsters monsters = initializeMonsters();
         System.out.println("Heroes are fighting a group of monsters! Here are the opponents:\n"+monsters.toString());
         Fight fight = new Fight(heroes, monsters);
         fight.fight();
+        setHeroes(fight.getHeroes());
+        System.out.println("Here is what your team now looks like:\n"+heroes.toString());
     }
 
     private TeamMonsters initializeMonsters() {
@@ -132,41 +134,38 @@ public class Quest {
     private void processInformationAction() {
         // process input of i
         Scanner in = new Scanner(System.in);
-        Unit[] units = heroes.getUnits();
         System.out.println("Your team is:\n"+heroes);
         System.out.println("Select a hero whose equipment you want to alter (1, 2 or 3) or "+actionKeys[4]+" to quit this menu.");
-        String ans = in.nextLine();
+        String ans = IOTools.getValidatedInput("1,2,3,q".split(","));
         if (ans.equals(actionKeys[4])) {
         }
         else {
-            try {
-                int heroID = Integer.parseInt(ans)-1;
-                if (heroID < 0 || heroID >= heroes.getUnits().length) {
-                    System.out.println("There is no such hero in the team. Quitting.");
-                } else {
-                    Hero hero = (Hero) heroes.getUnits()[heroID];
-                    System.out.println("You selected:\n"+hero.detailedToString());
-                    alterHero(hero);
-                }
-            } catch (Exception e) {
-                System.out.println("Your action was not successful. Quitting.");
+            Unit[] units = heroes.getUnits();
+            int heroID = Integer.parseInt(ans)-1;
+            if (heroID < 0 || heroID >= units.length) {
+                System.out.println("There is no such hero in the team. Quitting.");
+            } else {
+                Hero hero = (Hero) units[heroID];
+                System.out.println("You selected:\n"+hero.detailedToString());
+                units[heroID] = alterHero(hero);
+                heroes.setUnits(units);
             }
-
         }
     }
 
-    private static void alterHero(Hero hero) {
+    private static Hero alterHero(Hero hero) {
         // let the player alter hero
         boolean notDone = true;
         while (notDone) {
-            notDone = !alterHeroOnce(hero);
+            hero = alterHeroOnce(hero);
+            System.out.println("Would you like to do anything else with this hero? y/n");
+            String ans = IOTools.getValidatedInput("y,n".split(","));
+            if (ans.equals("n")) notDone = false;
         }
+        return hero;
     }
 
-    public static boolean alterHeroOnce(Hero hero) {
-        // returns true if done
-        Scanner in = new Scanner(System.in);
-        boolean done = false;
+    protected static Hero alterHeroOnce(Hero hero) {
         System.out.println("e = equip item; u, w = unequip the current weapon; \n" +
                 "u, a = unequip the current armor; d = drink potion; q = quit. \n" +
                 "Your choice:");
@@ -206,11 +205,14 @@ public class Quest {
             int id = IOTools.getIntInput(ids)-1;
             hero.drinkPotion(id); }
         }
-        else if (ans.equals(actionKeys[4])) { done = true; }
+        else if (ans.equals(actionKeys[4])) { return hero; }
         System.out.println("Have a look at the result of your action:\n"+hero.detailedToString());
-        return done;
+        return hero;
     }
 
+    private String[] heroesIndices() {
+        return General.intsToString(heroes.getUnitIDs());
+    }
 
     private void processMarket(Cell cell) {
         // process market interaction
@@ -222,41 +224,15 @@ public class Quest {
         boolean notDone = true;
         while (notDone) {
             System.out.println("Select the hero to interact with the market by typing the hero ID or "+actionKeys[4]+" to quit the market:");
-            Hero hero = (Hero) heroes.getUnits()[0];
-            try {
-                String ans = in.nextLine();
-                if (ans.equals(actionKeys[4])) { notDone = false; }
-                else {
-                    int heroID = Integer.parseInt(ans)-1;
-                    hero = (Hero) heroes.getUnits()[heroID];
-                }
-            } catch (Exception e) {
-                System.out.println("Your action was not successful. Try again.");
-                continue;
+            String ans = IOTools.getValidatedInput(heroesIndices());
+            if (ans.equals(actionKeys[4])) notDone = false;
+            else {
+                int heroID = Integer.parseInt(ans)-1;
+                Hero hero = (Hero) heroes.getUnits()[heroID];
+                hero.tradeWithMarket(market);
             }
-            if (! notDone ) { break; }
-            System.out.println(hero.getName()+" is trading with the market.");
-            System.out.println(hero.detailedToString());
-            System.out.println("Are you buying an item (b,i), a spell (b,s) or selling (s)?");
-            String ans = IOTools.getValidatedInput("b,i b,s s".split(" "));
-            if (ans.equals("s")) {
-                System.out.println("Enter the ID of the item you are selling.");
-                int id = IOTools.getIntInput(1, hero.getBackpack().getItems().length+1) - 1;
-                market.sell(id, hero);
-            } else if (ans.equals("b,i")) {
-                System.out.println("Enter the ID of the item you are buying.");
-                int id = IOTools.getIntInput(1, market.getItems().length+1) - 1;
-                market.buyItem(id, hero);
-            } else if (ans.equals("b,s")) {
-                System.out.println("Enter the ID of the spell you are buying.");
-                int id = IOTools.getIntInput(1, market.getSkills().length+1) - 1;
-                market.buySpell(id, hero);
-            }
-            System.out.println("Have a look at the hero after the trade.\n"+hero.detailedToString());
         }
     }
-
-
 
     private void initializeMap() {
         map = new Map();

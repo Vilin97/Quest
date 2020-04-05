@@ -1,13 +1,11 @@
-import java.util.Arrays;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.*;
 
-public class Market extends Cell {
+public class Market extends Cell implements Collection<Item> {
     private static String marketSymbol = "M";
     private Weapon[] weapons;
     private Armor[] armors;
     private Potion[] potions;
-    private Item[] items;
+    private List<Item> items;
     private Skill[] skills;
     private String legend = "Legend: b, i = buy item i; s, i = sell item i. Don't forget the comma!";
     private String welcomeMessage = "Welcome to the Market! Here you can buy and sell items.";
@@ -22,7 +20,7 @@ public class Market extends Cell {
         System.arraycopy(weapons, 0, items, 0, weapons.length);
         System.arraycopy(armors, 0, items, weapons.length, armors.length);
         for (int i = 0; i < potions.length; i++) { items[i + weapons.length + armors.length] = potions[i]; }
-        this.items = items;
+        this.items = Arrays.asList(items);
 
         Skill[] fireSpells = ReadFile.readSkillData(path+"FireSpells.txt","F");
         Skill[] iceSpells = ReadFile.readSkillData(path+"IceSpells.txt","I");
@@ -35,41 +33,77 @@ public class Market extends Cell {
     }
 
 
-
-    public boolean isMarket() { return true; }
-    public boolean isEmpty() { return false; }
-    public boolean isInaccessible() { return false; }
-
-    public void buyItem(int itemID, Hero hero) {
-        // hero buys item under ID itemID
-        Item item = items[itemID];
-        if (item.getCost() > hero.getBackpack().getMoney()) { System.out.println("Not enough money"); }
-        else if (item.getLevel() > hero.getLevel()) { System.out.println("Level not high enough"); }
-        else {
-            hero.getBackpack().addItem(items[itemID]);
-            hero.getBackpack().changeMoneyBy(-item.getCost());
-        }
+    @Override
+    public int size() {
+        return items.size();
     }
 
-    public void buySpell(int id, Hero hero) {
-        // hero buys spell under ID itemID
-        Skill skill = skills[id];
-        if (skill.getCost() > hero.getBackpack().getMoney()) { System.out.println("Not enough money"); }
-        else if (skill.getLevel() > hero.getLevel()) { System.out.println("Level not high enough"); }
-        else {
-            hero.getSkillSet().addSkill(skill);
-            hero.getBackpack().changeMoneyBy(-skill.getCost());
-        }
+    @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 
-    public void sell(int itemID, Hero hero) {
-        // hero sells item under ID itemID (in hero's backpack) for twice less than the cost
-        if (itemID < hero.getBackpack().getItems().length){
-            Backpack backpack = hero.getBackpack();
-            backpack.changeMoneyBy(backpack.getItems()[itemID].getCost()/2);
-            backpack.removeItem(itemID);
-        }
+    @Override
+    public boolean contains(Object o) {
+        return items.contains(o);
     }
+
+    @Override
+    public Iterator<Item> iterator() {
+        return items.iterator();
+    }
+
+    @Override
+    public Object[] toArray() {
+        return items.toArray();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        return items.toArray(a);
+    }
+
+    @Override
+    public boolean add(Item item) {
+        return items.add(item);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return items.remove(o);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return items.containsAll(c);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Item> c) {
+        return items.addAll(c);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return items.removeAll(c);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return items.retainAll(c);
+    }
+
+    @Override
+    public void clear() {
+        items.clear();
+    }
+
+
+    public boolean isMarketCell() { return true; }
+    public boolean isEmptyCell() { return false; }
+    public boolean isInaccessibleCell() { return false; }
+
+
 
     public Weapon[] getWeapons() {
         return weapons;
@@ -104,11 +138,11 @@ public class Market extends Cell {
     }
 
     public Item[] getItems() {
-        return items;
+        return items.toArray(new Item[0]);
     }
 
     public void setItems(Item[] items) {
-        this.items = items;
+        this.items = Arrays.asList(items);
     }
 
     public void displayWeapons() {
@@ -133,8 +167,8 @@ public class Market extends Cell {
         int num = getCount(type);
         int[] ids = new int[num];
         int j = 0;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].getType().equals(type)) {
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getType().equals(type)) {
                 ids[j] = i;
                 j ++;
             }
@@ -144,8 +178,8 @@ public class Market extends Cell {
 
     private int getCount(String type) {
         int res = 0;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].getType().equals(type)) { res++; }
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getType().equals(type)) { res++; }
         }
         return res;
     }

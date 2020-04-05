@@ -7,11 +7,13 @@ public class IOTools {
     public static String getValidatedInput(String[] possibleInputs) {
         // keep asking the user for input until it is recognized, and return it
         // spaces are stripped away
+        System.out.println("Expecting one of teh following inputs: "+possibleInputs.toString());
         String res = "";
         Scanner in = new Scanner(System.in);
         boolean notDone = true;
         while (notDone) {
             String ans = in.nextLine();
+            System.out.println("Your input is: "+ans);
             ans = ans.replace(" ", "");
             if (Arrays.asList(possibleInputs).contains(ans)) {
                 res = ans;

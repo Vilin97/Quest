@@ -1,24 +1,96 @@
-import java.util.Arrays;
+import java.util.*;
 
-public class Backpack {
+public class Backpack implements Collection<Item> {
     // class for hero's inventory
     private int money;
-    private Item[] items;
+    private List<Item> items;
 
     public Backpack(int money, Item[] items) {
         this.money = money;
-        this.items = items;
+        this.items = Arrays.asList(items);
     }
 
     public Backpack(int money) {
         this(money, new Item[0]);
     }
 
+    @Override
+    public int size() {
+        return items.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return items.contains(o);
+    }
+
+    @Override
+    public Iterator<Item> iterator() {
+        return items.iterator();
+    }
+
+    @Override
+    public Object[] toArray() {
+        return items.toArray();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        return items.toArray(a);
+    }
+
+    @Override
+    public boolean add(Item item) {
+        return items.add(item);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return items.remove(o);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return items.containsAll(c);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Item> c) {
+        return items.containsAll(c);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return items.removeAll(c);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return items.retainAll(c);
+    }
+
+    @Override
+    public void clear() {
+        setMoney(0);
+        items.clear();
+    }
+
+
+    public int[] getItemIDs() {
+        // get the IDs (indices) of the items starting with 1
+        return General.intsInRange(1,size()+1);
+    }
+
     public Weapon[] getWeapons() {
         int[] ids = getIds("Weapon");
         Weapon[] res = new Weapon[ids.length];
         for (int i = 0; i < ids.length; i++) {
-            res[i] = (Weapon) items[ids[i]];
+            res[i] = (Weapon) items.get(ids[i]);
         }
         return res;
     }
@@ -27,7 +99,7 @@ public class Backpack {
         int[] ids = getIds("Armor");
         Armor[] res = new Armor[ids.length];
         for (int i = 0; i < ids.length; i++) {
-            res[i] = (Armor) items[ids[i]];
+            res[i] = (Armor) items.get(ids[i]);
         }
         return res;
     }
@@ -36,7 +108,7 @@ public class Backpack {
         int[] ids = getIds("Potion");
         Potion[] res = new Potion[ids.length];
         for (int i = 0; i < ids.length; i++) {
-            res[i] = (Potion) items[ids[i]];
+            res[i] = (Potion) items.get(ids[i]);
         }
         return res;
     }
@@ -45,8 +117,8 @@ public class Backpack {
         int num = getCount(type);
         int[] ids = new int[num];
         int j = 0;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].getType().equals(type)) {
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getType().equals(type)) {
                 ids[j] = i;
                 j ++;
             }
@@ -56,8 +128,8 @@ public class Backpack {
 
     private int getCount(String type) {
         int res = 0;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].getType().equals(type)) { res++; }
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getType().equals(type)) { res++; }
         }
         return res;
     }
@@ -90,9 +162,9 @@ public class Backpack {
 
     public void addItem(Item item) {
         // add item to backpack
-        Item[] newItems = new Item[items.length + 1];
+        Item[] newItems = new Item[items.size() + 1];
         newItems[0] = item;
-        System.arraycopy(items, 0, newItems, 1, items.length);
+        System.arraycopy(items, 0, newItems, 1, items.size());
         setItems(newItems);
     }
 
@@ -104,8 +176,8 @@ public class Backpack {
     private int getID(Item item) {
         // returns -1 if item is not in the backpack
         int id = -1;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].equals(item)) {
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).equals(item)) {
                 id = i;
             }
         }
@@ -114,11 +186,12 @@ public class Backpack {
 
     public void removeItem(int itemID) {
         // does nothing if id is out of bounds
-        if (itemID < items.length && itemID >= 0) {
-            Item[] newItems = new Item[items.length - 1];
+        if (itemID < items.size() && itemID >= 0) {
+            Item[] newItems = new Item[items.size() - 1];
             System.arraycopy(items, 0, newItems, 0, itemID);
-            if (items.length - itemID + 1 >= 0)
-                System.arraycopy(items, itemID + 1, newItems, itemID, items.length - itemID + 1);
+            for (int i = itemID+1; i < items.size(); i++) {
+                newItems[i-1] = items.get(i);
+            }
             setItems(newItems);
         }
     }
@@ -136,10 +209,10 @@ public class Backpack {
     }
 
     public Item[] getItems() {
-        return items;
+        return toArray(new Item[0]);
     }
 
     public void setItems(Item[] items) {
-        this.items = items;
+        this.items = Arrays.asList(items);
     }
 }

@@ -5,13 +5,13 @@ public class Fight {
     private boolean fightOver;
     private boolean heroesWon;
     private boolean monstersWon;
-    private static String[] actionKeys = {"a", "c", "d", "s", "q"};
-    private static String legend = actionKeys[0]+" = attack; "+actionKeys[1]+" = cast spell;\n"
+    private static final String[] actionKeys = {"a", "c", "d", "s", "q"};
+    private static final String legend = actionKeys[0]+" = attack; "+actionKeys[1]+" = cast spell;\n"
             + actionKeys[3]+" = switch weapon/armor or drink potion; "+actionKeys[4]+" = retire from the fight (same as losing the fight).";
-    private static int victoryMoneyReward = 150;
-    private static int victoryExpReward = 2;
-    private static double regenerateHPMultiplier = 0.05;
-    private static double regenerateMPMultiplier = 0.05;
+    private static final int victoryMoneyReward = 150;
+    private static final int victoryExpReward = 2;
+    private static final double regenerateHPMultiplier = 0.05;
+    private static final double regenerateMPMultiplier = 0.05;
 
     public Fight(TeamHeroes heroes, TeamMonsters monsters, boolean fightOver, boolean heroesWon, boolean monstersWon) {
         this.heroes = heroes;
@@ -44,8 +44,8 @@ public class Fight {
         for (Unit h : heroes.getUnits()) {
             Hero hero = (Hero) h;
             hero.getBackpack().setMoney(hero.getBackpack().getMoney()/2);
+            hero.setCurrentHP(hero.getHP()/2);
         }
-        System.out.println("Here is what your team now looks like:\n"+heroes.toString());
     }
 
     private void processFightWon() {
@@ -138,5 +138,45 @@ public class Fight {
         } else if (ans.equals(actionKeys[4])) {
             heroes.killTeam();
         } else { processHeroAction(hero, monster);}
+    }
+
+    public TeamHeroes getHeroes() {
+        return heroes;
+    }
+
+    public void setHeroes(TeamHeroes heroes) {
+        this.heroes = heroes;
+    }
+
+    public TeamMonsters getMonsters() {
+        return monsters;
+    }
+
+    public void setMonsters(TeamMonsters monsters) {
+        this.monsters = monsters;
+    }
+
+    public boolean isFightOver() {
+        return fightOver;
+    }
+
+    public void setFightOver(boolean fightOver) {
+        this.fightOver = fightOver;
+    }
+
+    public boolean isHeroesWon() {
+        return heroesWon;
+    }
+
+    public void setHeroesWon(boolean heroesWon) {
+        this.heroesWon = heroesWon;
+    }
+
+    public boolean isMonstersWon() {
+        return monstersWon;
+    }
+
+    public void setMonstersWon(boolean monstersWon) {
+        this.monstersWon = monstersWon;
     }
 }
