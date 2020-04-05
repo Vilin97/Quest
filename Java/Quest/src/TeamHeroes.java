@@ -1,4 +1,4 @@
-public class TeamHeroes extends Team {
+public class TeamHeroes extends Team<Hero> {
     private static String legend =
             "ID | class | name | mana | strength | agility | dexterity | money | experience";
 
@@ -13,11 +13,9 @@ public class TeamHeroes extends Team {
         return "Team:\n" + legend +"\n"+ General.myArrayToString(getUnits());
     }
 
-    /*public void changeTeamMP(int amount){
-        for (Unit h : this ) {
-            Hero hero = (Hero) h;
-            hero.setCurrentMP();
+    public void regenerateTeamMP(double regenCoefficient){
+        for (Hero hero: this ) {
+            hero.setCurrentMP((int) (hero.getCurrentMP() + hero.getMp()*regenCoefficient));
         }
     }
-    */
 }

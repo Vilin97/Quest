@@ -5,13 +5,13 @@ public class Backpack implements Collection<Item> {
     private int money;
     private List<Item> items;
 
-    public Backpack(int money, Item[] items) {
+    public Backpack(int money, List<Item> items) {
         this.money = money;
-        this.items = Arrays.asList(items);
+        this.items = items;
     }
 
     public Backpack(int money) {
-        this(money, new Item[0]);
+        this(money, new ArrayList<>());
     }
 
     @Override
@@ -128,8 +128,10 @@ public class Backpack implements Collection<Item> {
 
     private int getCount(String type) {
         int res = 0;
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getType().equals(type)) { res++; }
+        for (Item item : items) {
+            if (item.getType().equals(type)) {
+                res++;
+            }
         }
         return res;
     }
@@ -162,10 +164,7 @@ public class Backpack implements Collection<Item> {
 
     public void addItem(Item item) {
         // add item to backpack
-        Item[] newItems = new Item[items.size() + 1];
-        newItems[0] = item;
-        System.arraycopy(items, 0, newItems, 1, items.size());
-        setItems(newItems);
+        this.add(item);
     }
 
     public void removeItem(Item item) {
@@ -187,12 +186,7 @@ public class Backpack implements Collection<Item> {
     public void removeItem(int itemID) {
         // does nothing if id is out of bounds
         if (itemID < items.size() && itemID >= 0) {
-            Item[] newItems = new Item[items.size() - 1];
-            System.arraycopy(items, 0, newItems, 0, itemID);
-            for (int i = itemID+1; i < items.size(); i++) {
-                newItems[i-1] = items.get(i);
-            }
-            setItems(newItems);
+            this.remove(items.get(itemID));
         }
     }
 

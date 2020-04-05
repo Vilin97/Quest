@@ -116,10 +116,12 @@ public class Quest {
         for (int i = 0; i < exoskeletons.length; i++) { availableMonsters[i + dragons.length + spirits.length] = exoskeletons[i]; }
 
         int highestLevel = heroes.getHighestLevel();
-        List<Monster> availableMonstersFilteredByLevel = new ArrayList<Monster>();
-        for (int i = 0; i < availableMonsters.length; i++) {
-            if (availableMonsters[i].getLevel() <= highestLevel){
-                availableMonstersFilteredByLevel.add(availableMonsters[i]); } }
+        List<Monster> availableMonstersFilteredByLevel = new ArrayList<>();
+        for (Monster availableMonster : availableMonsters) {
+            if (availableMonster.getLevel() <= highestLevel) {
+                availableMonstersFilteredByLevel.add(availableMonster);
+            }
+        }
         availableMonsters = new Monster[availableMonstersFilteredByLevel.size()];
         availableMonsters = availableMonstersFilteredByLevel.toArray(availableMonsters);
 
@@ -137,7 +139,7 @@ public class Quest {
         System.out.println("Your team is:\n"+heroes);
         System.out.println("Select a hero whose equipment you want to alter (1, 2 or 3) or "+actionKeys[4]+" to quit this menu.");
         String ans = IOTools.getValidatedInput("1,2,3,q".split(","));
-        if (ans.equals(actionKeys[4])) {
+        if (ans.equals(actionKeys[4])) { // do nothing
         }
         else {
             Unit[] units = heroes.getUnits();
@@ -210,8 +212,12 @@ public class Quest {
         return hero;
     }
 
-    private String[] heroesIndices() {
-        return General.intsToString(heroes.getUnitIDs());
+    private ArrayList<String> heroesIndices() {
+        ArrayList<String> res = new ArrayList<>();
+        for (int i: heroes.getUnitIDs()) {
+            res.add(Integer.toString(i));
+        }
+        return res;
     }
 
     private void processMarket(Cell cell) {
@@ -224,7 +230,9 @@ public class Quest {
         boolean notDone = true;
         while (notDone) {
             System.out.println("Select the hero to interact with the market by typing the hero ID or "+actionKeys[4]+" to quit the market:");
-            String ans = IOTools.getValidatedInput(heroesIndices());
+            ArrayList<String> inputs = heroesIndices();
+            inputs.add(actionKeys[4]);
+            String ans = IOTools.getValidatedInput(inputs);
             if (ans.equals(actionKeys[4])) notDone = false;
             else {
                 int heroID = Integer.parseInt(ans)-1;
@@ -246,7 +254,7 @@ public class Quest {
         Hero[] paladins = ReadFile.readHeroData(path+"Paladins.txt", "P");
         Hero[] availableHeroes = new Hero[warriors.length + sorcerers.length + paladins.length];
         System.arraycopy(warriors, 0, availableHeroes, 0, warriors.length);
-        System.arraycopy(sorcerers, 0, availableHeroes, 0 + warriors.length, sorcerers.length);
+        System.arraycopy(sorcerers, 0, availableHeroes, warriors.length, sorcerers.length);
         for (int i = 0; i < paladins.length; i++) { availableHeroes[i + warriors.length + sorcerers.length] = paladins[i]; }
         Scanner in = new Scanner(System.in);
         System.out.println("Hello! Welcome to The Quest!\n" +

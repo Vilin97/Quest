@@ -6,6 +6,10 @@ public abstract class Team<U extends Unit> implements Collection<U> {
     public Team() {
     }
 
+    public Team(List<U> units) {
+        this.units = units;
+    }
+
     public Team(Unit[] units) {
         this.units = (List<U>) Arrays.asList(units);
     }
@@ -87,16 +91,18 @@ public abstract class Team<U extends Unit> implements Collection<U> {
         return General.intsInRange(1,units.size()+1);
     }
 
-    public void changeTeamHP(int amount){
+    public void regenerateTeamHP(double regenCoefficient){
         for( Unit u : units) {
-            u.setCurrentHP(u.getCurrentHP() + amount);
+            u.setCurrentHP((int) (u.getCurrentHP() + u.getHP()*regenCoefficient));
         }
     }
 
     public Unit[] getAliveUnits() {
-        List<Unit> alive = new ArrayList<Unit>();
-        for (int i = 0; i < units.size(); i++) {
-            if (units.get(i).getCurrentHP() > 0){ alive.add(units.get(i)); }
+        List<Unit> alive = new ArrayList<>();
+        for (U unit : units) {
+            if (unit.getCurrentHP() > 0) {
+                alive.add(unit);
+            }
         }
         Unit[] res = new Unit[alive.size()];
         res = alive.toArray(res);
@@ -111,8 +117,8 @@ public abstract class Team<U extends Unit> implements Collection<U> {
     }
 
     public void killTeam() {
-        for (int i = 0; i < units.size(); i++) {
-            units.get(i).setCurrentHP(0);
+        for (U unit : units) {
+            unit.setCurrentHP(0);
         }
     }
 
@@ -122,8 +128,8 @@ public abstract class Team<U extends Unit> implements Collection<U> {
 
     public boolean teamDead() {
         boolean res = true;
-        for (int i = 0; i < units.size(); i++) {
-            if (units.get(i).getCurrentHP() > 0) {
+        for (U unit : units) {
+            if (unit.getCurrentHP() > 0) {
                 res = false;
             }
         }
@@ -133,11 +139,15 @@ public abstract class Team<U extends Unit> implements Collection<U> {
     public int getHighestLevel() {
         // return the highest level in the team
         int res = -1;
-        for (int i = 0; i < units.size(); i++) {
-            if (units.get(i).getLevel() > res) {
-                res = units.get(i).getLevel();
+        for (U unit : units) {
+            if (unit.getLevel() > res) {
+                res = unit.getLevel();
             }
         }
         return res;
+    }
+
+    public void setUnits(List<U> units) {
+        this.units = units;
     }
 }

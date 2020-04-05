@@ -15,6 +15,17 @@ public abstract class Item {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return getCost() == item.getCost() &&
+                getLevel() == item.getLevel() &&
+                Objects.equals(getName(), item.getName()) &&
+                Objects.equals(getType(), item.getType());
+    }
+
+    @Override
     public abstract String toString();
 
     public String getType() {

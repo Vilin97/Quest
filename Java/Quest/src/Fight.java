@@ -62,12 +62,14 @@ public class Fight {
         // the opponents are chosen randomly
         Unit[] aliveHeroes = heroes.getAliveUnits();
         System.out.println("\n        ******\nHeroes' turn to attack!");
-        for (int i = 0; i < aliveHeroes.length; i++) {
+        for (Unit aliveHero : aliveHeroes) {
             checkFightOver();
-            if (fightOver) { return; }
-            Hero hero = (Hero) aliveHeroes[i];
+            if (fightOver) {
+                return;
+            }
+            Hero hero = (Hero) aliveHero;
             Monster monster = (Monster) monsters.getRandomAliveUnit();
-            processHeroesTurn(hero,monster);
+            processHeroesTurn(hero, monster);
             if (!monster.isAlive()) {
                 hero.gainExperience(monster.getLevel());
             }
@@ -76,23 +78,23 @@ public class Fight {
         if (fightOver) { return; }
         System.out.println("\n        ******\nMonster' turn to attack!");
         Unit[] aliveMonsters = monsters.getAliveUnits();
-        for (int i = 0; i < aliveMonsters.length; i++) {
+        for (Unit aliveMonster : aliveMonsters) {
             checkFightOver();
-            if (fightOver) { return; }
+            if (fightOver) {
+                return;
+            }
             Hero hero = (Hero) heroes.getRandomAliveUnit();
-            Monster monster = (Monster) aliveMonsters[i];
-            processMonstersTurn(hero,monster);
+            Monster monster = (Monster) aliveMonster;
+            processMonstersTurn(hero, monster);
         }
+        checkFightOver();
         heroesRegenerate();
     }
 
     private void heroesRegenerate() {
         System.out.println("Heroes regenerate.");
-        for (Unit h : heroes.getUnits()) {
-            Hero hero = (Hero) h;
-            hero.setCurrentHP((int) (hero.getCurrentHP() + hero.getHP()*regenerateHPMultiplier));
-            hero.setCurrentMP((int) (hero.getCurrentMP() + hero.getMp() *regenerateMPMultiplier));
-        }
+        heroes.regenerateTeamHP(regenerateHPMultiplier);
+        heroes.regenerateTeamMP(regenerateMPMultiplier);
     }
 
     private void checkFightOver() {

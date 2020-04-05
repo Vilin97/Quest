@@ -1,19 +1,16 @@
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class SkillSet implements Collection<Skill> {
     // the class for the skill set of a hero
     private List<Skill> skills;
-    private static String legend = "ID. name | cost | mana cost | damage | required level";
+    private static String legend = "ID. skill type | name | cost | mana cost | damage | required level";
 
     public SkillSet(Skill[] skills) {
         this.skills = Arrays.asList(skills);
     }
 
     public SkillSet() {
-        skills = Arrays.asList(new Skill[0]);
+        skills = new ArrayList<>();
     }
 
     @Override
@@ -91,14 +88,11 @@ public class SkillSet implements Collection<Skill> {
 
     public String toString() {
         String s = legend+"\n";
-        return s+ General.myArrayToString(new List[]{skills});
+        return s+ General.myListToString(skills);
     }
 
     public void addSkill(Skill skill) {
         // add skill to Skill Set
-        Skill[] newSkills = new Skill[skills.size() + 1];
-        newSkills[0] = skill;
-        System.arraycopy(skills, 0, newSkills, 1, skills.size());
-        setSkills(newSkills);
+        skills.add(skill);
     }
 }

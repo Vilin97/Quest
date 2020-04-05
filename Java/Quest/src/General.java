@@ -15,6 +15,26 @@ public class General {
         return myArrayToString(ar, 1);
     }
 
+    public static <T> String myListToString (List<T> ar) {
+        // converts [a,b,c] to "
+        // 1. a
+        // 2. b
+        // 3. c"
+        return myListToString(ar, 1);
+    }
+
+    public static <T> String myListToString (List<T> ar, int start) {
+        // converts [a,b,c] to "
+        // start. a
+        // start + 1. b
+        // start + 2. c"
+        String s = "";
+        for (int i = 0; i < ar.size(); i++) {
+            s += (i+start) + ". " + ar.get(i).toString() + "\n";
+        }
+        return s;
+    }
+
     public static <T> String myArrayToString (T[] ar, int start) {
         // converts [a,b,c] to "
         // start. a
@@ -28,8 +48,7 @@ public class General {
     }
 
     public static String[] stringToArray(String ans) {
-        String[] ar = ans.replace(" ", "").split(",");
-        return ar;
+        return ans.replace(" ", "").split(",");
     }
 
 

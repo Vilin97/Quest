@@ -1,13 +1,14 @@
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class IOTools {
     // class to get input from user
 
-    public static String getValidatedInput(String[] possibleInputs) {
+    public static String getValidatedInput(List<String> possibleInputs) {
         // keep asking the user for input until it is recognized, and return it
         // spaces are stripped away
-        System.out.println("Expecting one of teh following inputs: "+possibleInputs.toString());
+        System.out.println("Expecting one of the following inputs: "+String.join(", ", possibleInputs));
         String res = "";
         Scanner in = new Scanner(System.in);
         boolean notDone = true;
@@ -15,7 +16,7 @@ public class IOTools {
             String ans = in.nextLine();
             System.out.println("Your input is: "+ans);
             ans = ans.replace(" ", "");
-            if (Arrays.asList(possibleInputs).contains(ans)) {
+            if (possibleInputs.contains(ans)) {
                 res = ans;
                 notDone = false;
             } else {
@@ -23,6 +24,12 @@ public class IOTools {
             }
         }
         return res;
+    }
+
+    public static String getValidatedInput(String[] possibleInputs) {
+        // keep asking the user for input until it is recognized, and return it
+        // spaces are stripped away
+        return getValidatedInput(Arrays.asList(possibleInputs));
     }
 
     public static String[] getNInputs(String[][] possibleInputs, String delimiter) {
